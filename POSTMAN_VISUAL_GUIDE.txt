@@ -1,0 +1,249 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    POSTMAN IMAGE UPLOAD - VISUAL GUIDE                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: LOGIN TO GET TOKEN                                                   │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Postman Window ─────────────────────────────────────────────────────────────┐
+│                                                                               │
+│  Method: [POST ▼]  URL: http://localhost:8000/api/login                      │
+│                                                                               │
+│  Tabs: Params | Authorization | Headers | Body | Pre-request | Tests         │
+│         ─────────────────────────────────────────────────────────────────    │
+│                                                                               │
+│  ┌─ Body Tab ─────────────────────────────────────────────────────────────┐ │
+│  │                                                                          │ │
+│  │  ○ none                                                                  │ │
+│  │  ○ form-data                                                             │ │
+│  │  ○ x-www-form-urlencoded                                                 │ │
+│  │  ● raw                                                                   │ │
+│  │  ○ binary                                                                │ │
+│  │                                                                          │ │
+│  │  Format: [JSON ▼]                                                        │ │
+│  │                                                                          │ │
+│  │  {                                                                       │ │
+│  │      "email": "ashu@example.com",                                        │ │
+│  │      "password": "password"                                              │ │
+│  │  }                                                                       │ │
+│  │                                                                          │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                               │
+│  [Send]                                                                       │
+│                                                                               │
+│  ┌─ Response ───────────────────────────────────────────────────────────────┐ │
+│  │ Status: 200 OK                                                           │ │
+│  │                                                                          │ │
+│  │ {                                                                        │ │
+│  │     "success": true,                                                     │ │
+│  │     "message": "Login successful",                                       │ │
+│  │     "data": {                                                            │ │
+│  │         "user": {...},                                                   │ │
+│  │         "token": "1|abcdefghijklmnopqrstuvwxyz123456789"  ← COPY THIS   │ │
+│  │     }                                                                    │ │
+│  │ }                                                                        │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: CREATE POST WITH IMAGE                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Postman Window ─────────────────────────────────────────────────────────────┐
+│                                                                               │
+│  Method: [POST ▼]  URL: http://localhost:8000/api/posts                      │
+│                                                                               │
+│  Tabs: Params | Authorization | Headers | Body | Pre-request | Tests         │
+│         ──────────────────────                                                │
+│                                                                               │
+│  ┌─ Authorization Tab ──────────────────────────────────────────────────────┐ │
+│  │                                                                          │ │
+│  │  Type: [Bearer Token ▼]                                                  │ │
+│  │                                                                          │ │
+│  │  Token: 1|abcdefghijklmnopqrstuvwxyz123456789  ← PASTE TOKEN HERE       │ │
+│  │                                                                          │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                               │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+┌─ Postman Window (Body Tab) ──────────────────────────────────────────────────┐
+│                                                                               │
+│  Tabs: Params | Authorization | Headers | Body | Pre-request | Tests         │
+│         ──────────────────────────────────                                    │
+│                                                                               │
+│  ┌─ Body Tab ─────────────────────────────────────────────────────────────┐ │
+│  │                                                                          │ │
+│  │  ○ none                                                                  │ │
+│  │  ● form-data  ← SELECT THIS!                                            │ │
+│  │  ○ x-www-form-urlencoded                                                 │ │
+│  │  ○ raw                                                                   │ │
+│  │  ○ binary                                                                │ │
+│  │                                                                          │ │
+│  │  ┌────────────┬──────────────────────────┬──────────┐                   │ │
+│  │  │ KEY        │ VALUE                    │ TYPE     │                   │ │
+│  │  ├────────────┼──────────────────────────┼──────────┤                   │ │
+│  │  │ title      │ My Post with Image       │ Text     │                   │ │
+│  │  │ content    │ This is test content     │ Text     │                   │ │
+│  │  │ image      │ [Select Files]           │ File ▼   │ ← IMPORTANT!      │ │
+│  │  └────────────┴──────────────────────────┴──────────┘                   │ │
+│  │                                                                          │ │
+│  │  IMPORTANT: Click dropdown next to "image" KEY and select "File"        │ │
+│  │             Then click "Select Files" button to choose your image        │ │
+│  │                                                                          │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│                                                                               │
+│  [Send]                                                                       │
+│                                                                               │
+│  ┌─ Response ───────────────────────────────────────────────────────────────┐ │
+│  │ Status: 201 Created                                                      │ │
+│  │                                                                          │ │
+│  │ {                                                                        │ │
+│  │     "success": true,                                                     │ │
+│  │     "message": "Post created successfully",                              │ │
+│  │     "data": {                                                            │ │
+│  │         "id": 1,                                                         │ │
+│  │         "title": "My Post with Image",                                   │ │
+│  │         "content": "This is test content",                               │ │
+│  │         "image": "posts/abc123xyz.jpg",                                  │ │
+│  │         "image_url": "http://localhost:8000/storage/posts/abc123.jpg",   │ │
+│  │         ...                                                              │ │
+│  │     }                                                                    │ │
+│  │ }                                                                        │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+└───────────────────────────────────────────────────────────────────────────────┘
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ COMMON MISTAKES TO AVOID                                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+❌ WRONG: Using raw JSON for image upload
+   ┌──────────────────────────────────────┐
+   │ ● raw                                │
+   │ {                                    │
+   │     "title": "Test",                 │
+   │     "image": "..."  ← Can't do this! │
+   │ }                                    │
+   └──────────────────────────────────────┘
+
+✅ CORRECT: Using form-data
+   ┌──────────────────────────────────────┐
+   │ ● form-data                          │
+   │ title    | Test        | Text        │
+   │ image    | [File]      | File        │
+   └──────────────────────────────────────┘
+
+
+❌ WRONG: Image field type is "Text"
+   ┌──────────────────────────────────────┐
+   │ image    | test.jpg    | Text ▼      │
+   └──────────────────────────────────────┘
+
+✅ CORRECT: Image field type is "File"
+   ┌──────────────────────────────────────┐
+   │ image    | [Select]    | File ▼      │
+   └──────────────────────────────────────┘
+
+
+❌ WRONG: Token in Headers tab manually
+   ┌──────────────────────────────────────┐
+   │ Headers Tab:                         │
+   │ Authorization | Bearer 1|abc...      │
+   └──────────────────────────────────────┘
+
+✅ CORRECT: Token in Authorization tab
+   ┌──────────────────────────────────────┐
+   │ Authorization Tab:                   │
+   │ Type: Bearer Token                   │
+   │ Token: 1|abc...                      │
+   └──────────────────────────────────────┘
+
+
+❌ WRONG: Missing /api in URL
+   http://localhost:8000/posts
+
+✅ CORRECT: Include /api prefix
+   http://localhost:8000/api/posts
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ VERIFICATION CHECKLIST                                                       │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+Before clicking Send, verify:
+
+□ Server is running (php artisan serve)
+□ URL is: http://localhost:8000/api/posts
+□ Method is: POST
+□ Authorization tab has Bearer Token with valid token
+□ Body tab is set to: form-data (not raw)
+□ title field exists and has value
+□ content field exists and has value
+□ image field type is: File (not Text)
+□ Image file is selected
+□ No manual Content-Type header in Headers tab
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ IF YOU GET HTML INSTEAD OF JSON                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+1. Check URL has /api prefix:
+   ✅ http://localhost:8000/api/posts
+   ❌ http://localhost:8000/posts
+
+2. Clear routes:
+   cd backend
+   php artisan route:clear
+   php artisan config:clear
+
+3. Restart server:
+   php artisan serve
+
+4. Try test endpoint first:
+   GET http://localhost:8000/api/test
+   Should return: {"message": "API is working"}
+
+5. If test works, issue is with authentication
+   Get fresh token by logging in again
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ QUICK TEST SEQUENCE                                                          │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+1. Test API:
+   GET http://localhost:8000/api/test
+   → Should return JSON
+
+2. Login:
+   POST http://localhost:8000/api/login
+   → Copy token
+
+3. Create post without image:
+   POST http://localhost:8000/api/posts
+   Body: form-data (title, content only)
+   → Should create post
+
+4. Create post with image:
+   POST http://localhost:8000/api/posts
+   Body: form-data (title, content, image)
+   → Should create post with image_url
+
+5. Verify image:
+   Copy image_url from response
+   Paste in browser
+   → Should display image
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              NEED MORE HELP?                                 ║
+║                                                                              ║
+║  Read these files:                                                           ║
+║  • POSTMAN_EXACT_STEPS.md - Detailed step-by-step guide                     ║
+║  • TROUBLESHOOTING.md - Complete troubleshooting guide                       ║
+║  • QUICK_REFERENCE.md - Quick commands and tips                              ║
+║  • IMAGE_UPLOAD_SUMMARY.md - Full implementation details                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
