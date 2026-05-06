@@ -9,15 +9,49 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    // GET /api/posts — public, return all posts with author info
-    public function index(): JsonResponse
+    // GET /api/posts — public, return all posts with search & filters
+    public function index(Request $request): JsonResponse
     {
-        $posts = Post::with(['user:id,name,email', 'category', 'tags'])->latest()->get();
+        $query = Post::query();
+
+        // Search by title or content
+        if ($request->has('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                  ->orWhere('content', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Filter by category
+        if ($request->has('category')) {
+            $query->where('category_id', $request->input('category'));
+        }
+
+        // Filter by tag
+        if ($request->has('tag')) {
+            $query->whereHas('tags', function ($q) use ($request) {
+                $q->where('tags.id', $request->input('tag'));
+            });
+        }
+
+        // Eager load relationships and paginate
+        $posts = $query->with(['user:id,name,email', 'category', 'tags'])
+                       ->latest()
+                       ->paginate(10);
 
         return response()->json([
             'success' => true,
             'message' => 'Posts retrieved successfully',
-            'data'    => $posts,
+            'data'    => $posts->items(),
+            'pagination' => [
+                'total'        => $posts->total(),
+                'per_page'     => $posts->perPage(),
+                'current_page' => $posts->currentPage(),
+                'last_page'    => $posts->lastPage(),
+                'from'         => $posts->firstItem(),
+                'to'           => $posts->lastItem(),
+            ],
         ]);
     }
 
