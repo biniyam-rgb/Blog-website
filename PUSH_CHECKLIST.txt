@@ -1,0 +1,126 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    GIT PUSH CHECKLIST                                        ║
+║                    (8 Separate Commits)                                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Copy and paste each block one by one into your terminal.
+Check the box after each successful push.
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 1: Migration                                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+cd backend
+git add database/migrations/2026_05_06_221341_add_image_to_posts_table.php
+git commit -m "feat: add image column to posts table"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 2: Model                                                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+git add app/Models/Post.php
+git commit -m "feat: add image support to Post model"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 3: Controller                                                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+git add app/Http/Controllers/Api/PostController.php
+git commit -m "feat: implement image upload in PostController"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 4: Tests                                                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+git add tests/Feature/PostTest.php
+git commit -m "test: add image upload tests"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 5: Postman Guides                                                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+git add QUICK_REFERENCE.md POSTMAN_VISUAL_GUIDE.txt POSTMAN_EXACT_STEPS.md
+git commit -m "docs: add Postman testing guides"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 6: Troubleshooting Guides                                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+git add POSTMAN_IMAGE_UPLOAD_GUIDE.md TROUBLESHOOTING.md IMAGE_UPLOAD_SUMMARY.md
+git commit -m "docs: add troubleshooting and summary guides"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 7: Testing Documentation                                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+git add README_IMAGE_UPLOAD.md TESTING_CHECKLIST.md TEST_RESULTS.md
+git commit -m "docs: add testing documentation"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ ☐ STEP 8: Final Documentation                                               │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+git add TEST_SUMMARY.txt DOCUMENTATION_INDEX.md GIT_PUSH_GUIDE.md PUSH_STEP_BY_STEP.md PUSH_CHECKLIST.txt
+git commit -m "docs: add test summary and documentation index"
+git push origin main
+
+→ Check GitHub for commit ✓
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              SUMMARY                                         ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+After completing all steps, you will have 8 commits:
+
+1. feat: add image column to posts table
+2. feat: add image support to Post model
+3. feat: implement image upload in PostController
+4. test: add image upload tests
+5. docs: add Postman testing guides
+6. docs: add troubleshooting and summary guides
+7. docs: add testing documentation
+8. docs: add test summary and documentation index
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                         VERIFY ON GITHUB                                     ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Go to: https://github.com/YOUR_USERNAME/YOUR_REPO/commits
+
+You should see 8 new commits with the messages above.
+
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              DONE! 🎉                                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
