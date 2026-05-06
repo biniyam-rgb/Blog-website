@@ -12,7 +12,7 @@ class PostController extends Controller
     // GET /api/posts — public, return all posts with author info
     public function index(): JsonResponse
     {
-        $posts = Post::with('user:id,name,email')->latest()->get();
+        $posts = Post::with(['user:id,name,email', 'category', 'tags'])->latest()->get();
 
         return response()->json([
             'success' => true,
@@ -24,7 +24,7 @@ class PostController extends Controller
     // GET /api/posts/{id} — public, return single post
     public function show(int $id): JsonResponse
     {
-        $post = Post::with('user:id,name,email')->findOrFail($id);
+        $post = Post::with(['user:id,name,email', 'category', 'tags'])->findOrFail($id);
 
         return response()->json([
             'success' => true,
@@ -37,20 +37,28 @@ class PostController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags'        => 'nullable|array',
+            'tags.*'      => 'exists:tags,id',
         ]);
 
         $post = Post::create([
-            'title'   => $validated['title'],
-            'content' => $validated['content'],
-            'user_id' => auth()->id(),
+            'title'       => $validated['title'],
+            'content'     => $validated['content'],
+            'user_id'     => auth()->id(),
+            'category_id' => $validated['category_id'] ?? null,
         ]);
+
+        if (!empty($validated['tags'])) {
+            $post->tags()->attach($validated['tags']);
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Post created successfully',
-            'data'    => $post->load('user:id,name,email'),
+            'data'    => $post->load(['user:id,name,email', 'category', 'tags']),
         ], 201);
     }
 
@@ -67,16 +75,27 @@ class PostController extends Controller
         }
 
         $validated = $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string',
+            'category_id' => 'nullable|exists:categories,id',
+            'tags'        => 'nullable|array',
+            'tags.*'      => 'exists:tags,id',
         ]);
 
-        $post->update($validated);
+        $post->update([
+            'title'       => $validated['title'],
+            'content'     => $validated['content'],
+            'category_id' => $validated['category_id'] ?? null,
+        ]);
+
+        if (isset($validated['tags'])) {
+            $post->tags()->sync($validated['tags']);
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Post updated successfully',
-            'data'    => $post->load('user:id,name,email'),
+            'data'    => $post->load(['user:id,name,email', 'category', 'tags']),
         ]);
     }
 
