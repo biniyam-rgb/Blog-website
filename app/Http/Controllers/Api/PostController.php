@@ -42,13 +42,20 @@ class PostController extends Controller
             'category_id' => 'nullable|exists:categories,id',
             'tags'        => 'nullable|array',
             'tags.*'      => 'exists:tags,id',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('posts', 'public');
+        }
 
         $post = Post::create([
             'title'       => $validated['title'],
             'content'     => $validated['content'],
             'user_id'     => auth()->id(),
             'category_id' => $validated['category_id'] ?? null,
+            'image'       => $imagePath,
         ]);
 
         if (!empty($validated['tags'])) {
@@ -80,12 +87,23 @@ class PostController extends Controller
             'category_id' => 'nullable|exists:categories,id',
             'tags'        => 'nullable|array',
             'tags.*'      => 'exists:tags,id',
+            'image'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($post->image) {
+                \Storage::disk('public')->delete($post->image);
+            }
+            $validated['image'] = $request->file('image')->store('posts', 'public');
+        }
 
         $post->update([
             'title'       => $validated['title'],
             'content'     => $validated['content'],
             'category_id' => $validated['category_id'] ?? null,
+            'image'       => $validated['image'] ?? $post->image,
         ]);
 
         if (isset($validated['tags'])) {
@@ -110,6 +128,11 @@ class PostController extends Controller
                 'success' => false,
                 'message' => 'Unauthorized - only the owner or admin can delete this post',
             ], 403);
+        }
+
+        // Delete image if exists
+        if ($post->image) {
+            \Storage::disk('public')->delete($post->image);
         }
 
         $post->delete();
