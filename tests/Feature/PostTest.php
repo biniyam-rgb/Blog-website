@@ -101,3 +101,52 @@ test('post can be created with category and tags', function () {
     $response->assertStatus(201)
              ->assertJsonPath('data.category.id', $category->id);
 });
+
+
+test('authenticated user can create a post with image', function () {
+    $user = User::factory()->create();
+    $token = $user->createToken('auth_token')->plainTextToken;
+
+    // Create a fake file
+    $file = \Illuminate\Http\UploadedFile::fake()->create('test.jpg', 100);
+
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+                     ->post('/api/posts', [
+                         'title'   => 'Post with image',
+                         'content' => 'Test content',
+                         'image'   => $file,
+                     ]);
+
+    $response->assertStatus(201)
+             ->assertJson(['success' => true])
+             ->assertJsonStructure(['data' => ['image', 'image_url']]);
+
+    // Verify image was stored
+    $post = \App\Models\Post::latest()->first();
+    expect($post->image)->not->toBeNull();
+    \Storage::disk('public')->assertExists($post->image);
+});
+
+test('post image is deleted when post is deleted', function () {
+    $user  = User::factory()->create();
+    $token = $user->createToken('auth_token')->plainTextToken;
+    $file = \Illuminate\Http\UploadedFile::fake()->create('test.jpg', 100);
+
+    // Create post with image
+    $response = $this->withHeader('Authorization', 'Bearer '.$token)
+                     ->post('/api/posts', [
+                         'title'   => 'Post with image',
+                         'content' => 'Test content',
+                         'image'   => $file,
+                     ]);
+
+    $post = \App\Models\Post::latest()->first();
+    $imagePath = $post->image;
+
+    // Delete post
+    $this->withHeader('Authorization', 'Bearer '.$token)
+         ->deleteJson("/api/posts/{$post->id}");
+
+    // Verify image was deleted
+    \Storage::disk('public')->assertMissing($imagePath);
+});
