@@ -11,7 +11,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ['title', 'content', 'user_id', 'category_id'];
+    
+    protected $fillable = ['title', 'content', 'user_id', 'category_id', 'image'];
+
+    protected $appends = ['image_url'];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
 
     public function user(): BelongsTo
     {
