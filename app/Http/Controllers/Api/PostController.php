@@ -14,6 +14,12 @@ class PostController extends Controller
     {
         $query = Post::query();
 
+        // Only show approved posts for public (non-admin users)
+        $user = auth('sanctum')->user();
+        if (!$user || $user->role !== 'admin') {
+            $query->where('status', 'approved');
+        }
+
         // Search by title or content
         if ($request->has('search')) {
             $search = $request->input('search');
