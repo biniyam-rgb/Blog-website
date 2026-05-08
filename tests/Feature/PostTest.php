@@ -154,9 +154,9 @@ test('post image is deleted when post is deleted', function () {
 // Search & Filter Tests
 
 test('can search posts by title', function () {
-    Post::factory()->create(['title' => 'Laravel Tutorial']);
-    Post::factory()->create(['title' => 'React Guide']);
-    Post::factory()->create(['title' => 'Vue Basics']);
+    Post::factory()->create(['title' => 'Laravel Tutorial', 'status' => 'approved']);
+    Post::factory()->create(['title' => 'React Guide', 'status' => 'approved']);
+    Post::factory()->create(['title' => 'Vue Basics', 'status' => 'approved']);
 
     $response = $this->getJson('/api/posts?search=Laravel');
 
@@ -165,8 +165,8 @@ test('can search posts by title', function () {
 });
 
 test('can search posts by content', function () {
-    Post::factory()->create(['content' => 'This is about Laravel framework']);
-    Post::factory()->create(['content' => 'This is about React library']);
+    Post::factory()->create(['content' => 'This is about Laravel framework', 'status' => 'approved']);
+    Post::factory()->create(['content' => 'This is about React library', 'status' => 'approved']);
 
     $response = $this->getJson('/api/posts?search=Laravel');
 
@@ -178,8 +178,8 @@ test('can filter posts by category', function () {
     $category1 = Category::factory()->create();
     $category2 = Category::factory()->create();
 
-    Post::factory()->count(2)->create(['category_id' => $category1->id]);
-    Post::factory()->create(['category_id' => $category2->id]);
+    Post::factory()->count(2)->create(['category_id' => $category1->id, 'status' => 'approved']);
+    Post::factory()->create(['category_id' => $category2->id, 'status' => 'approved']);
 
     $response = $this->getJson("/api/posts?category={$category1->id}");
 
@@ -191,10 +191,10 @@ test('can filter posts by tag', function () {
     $tag1 = Tag::factory()->create();
     $tag2 = Tag::factory()->create();
 
-    $post1 = Post::factory()->create();
+    $post1 = Post::factory()->create(['status' => 'approved']);
     $post1->tags()->attach($tag1->id);
 
-    $post2 = Post::factory()->create();
+    $post2 = Post::factory()->create(['status' => 'approved']);
     $post2->tags()->attach($tag2->id);
 
     $response = $this->getJson("/api/posts?tag={$tag1->id}");
@@ -210,12 +210,14 @@ test('can combine search and filters', function () {
     $post1 = Post::factory()->create([
         'title' => 'Laravel Tutorial',
         'category_id' => $category->id,
+        'status' => 'approved',
     ]);
     $post1->tags()->attach($tag->id);
 
     $post2 = Post::factory()->create([
         'title' => 'React Guide',
         'category_id' => $category->id,
+        'status' => 'approved',
     ]);
 
     $response = $this->getJson("/api/posts?search=Laravel&category={$category->id}&tag={$tag->id}");
@@ -225,7 +227,7 @@ test('can combine search and filters', function () {
 });
 
 test('posts are paginated', function () {
-    Post::factory()->count(15)->create();
+    Post::factory()->count(15)->create(['status' => 'approved']);
 
     $response = $this->getJson('/api/posts');
 
@@ -247,7 +249,7 @@ test('posts are paginated', function () {
 });
 
 test('can navigate to second page', function () {
-    Post::factory()->count(15)->create();
+    Post::factory()->count(15)->create(['status' => 'approved']);
 
     $response = $this->getJson('/api/posts?page=2');
 
@@ -257,8 +259,8 @@ test('can navigate to second page', function () {
 });
 
 test('posts are sorted by latest first', function () {
-    $oldPost = Post::factory()->create(['created_at' => now()->subDays(2)]);
-    $newPost = Post::factory()->create(['created_at' => now()]);
+    $oldPost = Post::factory()->create(['created_at' => now()->subDays(2), 'status' => 'approved']);
+    $newPost = Post::factory()->create(['created_at' => now(), 'status' => 'approved']);
 
     $response = $this->getJson('/api/posts');
 
